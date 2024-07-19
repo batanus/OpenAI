@@ -22,6 +22,7 @@ final public class OpenAI: OpenAIProtocol {
         
         /// API host. Set this property if you use some kind of proxy or your own server. Default is api.openai.com
         public let host: String
+        /// UserID which will be sent in headers
         public let user: String?
         public let port: Int
         public let pathPrefix: String

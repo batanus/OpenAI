@@ -34,8 +34,6 @@ public struct AudioTranscriptionQuery: Codable {
     /// https://platform.openai.com/docs/guides/speech-to-text/prompting
     public let language: String?
 
-    public let user: String?
-
     public init(
         file: Data,
         fileType: Self.FileType,
@@ -43,8 +41,7 @@ public struct AudioTranscriptionQuery: Codable {
         prompt: String? = nil,
         temperature: Double? = nil,
         language: String? = nil,
-        responseFormat: Self.ResponseFormat? = nil,
-        user: String?
+        responseFormat: Self.ResponseFormat? = nil
     ) {
         self.file = file
         self.fileType = fileType
@@ -53,7 +50,6 @@ public struct AudioTranscriptionQuery: Codable {
         self.temperature = temperature
         self.language = language
         self.responseFormat = responseFormat
-        self.user = user
     }
 
     public enum FileType: String, Codable, Equatable, CaseIterable {
@@ -101,7 +97,6 @@ extension AudioTranscriptionQuery: MultipartFormDataBodyEncodable {
             .string(paramName: "temperature", value: temperature),
             .string(paramName: "language", value: language),
             .string(paramName: "response_format", value: responseFormat),
-            .string(paramName: "user", value: user)
         ])
         return bodyBuilder.build()
     }

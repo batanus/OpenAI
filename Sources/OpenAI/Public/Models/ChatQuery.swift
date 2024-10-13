@@ -731,7 +731,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
                 public struct Property: Codable, Equatable {
                     public typealias JSONType = ChatQuery.ChatCompletionToolParam.FunctionDefinition.FunctionParameters.JSONType
 
-                    public let type: Self.JSONType
+                    public let type: [Self.JSONType]
                     public let description: String?
                     public let format: String?
                     public let items: Self.Items?
@@ -745,6 +745,38 @@ public struct ChatQuery: Equatable, Codable, Streamable {
                     public let minItems: Int?
                     public let maxItems: Int?
                     public let uniqueItems: Bool?
+
+                    public init(
+                        type: [Self.JSONType],
+                        description: String? = nil,
+                        format: String? = nil,
+                        items: Self.Items? = nil,
+                        required: [String]? = nil,
+                        pattern: String? = nil,
+                        const: String? = nil,
+                        enum: [String]? = nil,
+                        multipleOf: Int? = nil,
+                        minimum: Double? = nil,
+                        maximum: Double? = nil,
+                        minItems: Int? = nil,
+                        maxItems: Int? = nil,
+                        uniqueItems: Bool? = nil
+                    ) {
+                        self.type = type
+                        self.description = description
+                        self.format = format
+                        self.items = items
+                        self.required = required
+                        self.pattern = pattern
+                        self.const = const
+                        self.`enum` = `enum`
+                        self.multipleOf = multipleOf
+                        self.minimum = minimum
+                        self.maximum = maximum
+                        self.minItems = minItems
+                        self.maxItems = maxItems
+                        self.uniqueItems = uniqueItems
+                    }
 
                     public init(
                         type: Self.JSONType,
@@ -762,7 +794,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
                         maxItems: Int? = nil,
                         uniqueItems: Bool? = nil
                     ) {
-                        self.type = type
+                        self.type = [type]
                         self.description = description
                         self.format = format
                         self.items = items

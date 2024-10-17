@@ -613,6 +613,7 @@ public struct ChatQuery: Equatable, Codable, Streamable {
     public enum ChatCompletionFunctionCallOptionParam: Codable, Equatable {
         case none
         case auto
+        case required
         case function(String)
 
         public func encode(to encoder: Encoder) throws {
@@ -623,6 +624,9 @@ public struct ChatQuery: Equatable, Codable, Streamable {
             case .auto:
                 var container = encoder.singleValueContainer()
                 try container.encode(CodingKeys.auto.rawValue)
+            case .required:
+                var container = encoder.singleValueContainer()
+                try container.encode(CodingKeys.required.rawValue)
             case .function(let name):
                 var container = encoder.container(keyedBy: Self.ChatCompletionFunctionCallNameParam.CodingKeys.self)
                 try container.encode("function", forKey: .type)
@@ -635,8 +639,9 @@ public struct ChatQuery: Equatable, Codable, Streamable {
         }
 
         enum CodingKeys: String, CodingKey {
-            case none = "none"
-            case auto = "auto"
+            case none
+            case auto
+            case required
             case function = "name"
         }
 

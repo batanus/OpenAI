@@ -117,7 +117,7 @@ public struct ChatStreamResult: Codable, Equatable {
     }
 
     /// A unique identifier for the chat completion. Each chunk has the same ID.
-    public let id: String
+    public let id: String?
     /// The object type, which is always `chat.completion.chunk`.
     public let object: String
     /// The Unix timestamp (in seconds) of when the chat completion was created.

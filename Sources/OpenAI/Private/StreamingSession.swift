@@ -24,6 +24,7 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
     private let streamingCompletionMarker = "[DONE]"
     private let urlRequest: URLRequest
     private let sslDelegate: SSLDelegateProtocol?
+    private var byteBuffer = Data()
     private lazy var urlSession: URLSession = {
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         return session
@@ -51,11 +52,10 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
             onReceiveContent?(self, result)
             return
         }
-        guard let stringContent = String(data: data, encoding: .utf8) else {
-            onProcessingError?(self, StreamingError.unknownContent)
-            return
-        }
+        byteBuffer.append(data)
+        guard let stringContent = String(data: byteBuffer, encoding: .utf8) else { return }
         processJSON(from: stringContent)
+        byteBuffer.removeAll()
     }
     
     func urlSession(

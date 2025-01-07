@@ -16,12 +16,14 @@ public struct APIError: Error, Decodable, Equatable {
     public let type: String?
     public let param: String?
     public let code: String?
-  
-  public init(message: String, type: String?, param: String?, code: String?) {
+    public let statusCode: Int?
+
+  public init(message: String, type: String?, param: String?, code: String?, statusCode: Int?) {
     self.message = message
     self.type = type
     self.param = param
     self.code = code
+    self.statusCode = statusCode
   }
   
   enum CodingKeys: CodingKey {
@@ -29,6 +31,7 @@ public struct APIError: Error, Decodable, Equatable {
     case type
     case param
     case code
+    case statusCode
   }
   
   public init(from decoder: Decoder) throws {
@@ -48,6 +51,7 @@ public struct APIError: Error, Decodable, Equatable {
     self.type = try container.decodeIfPresent(String.self, forKey: .type)
     self.param = try container.decodeIfPresent(String.self, forKey: .param)
     self.code = try container.decodeIfPresent(String.self, forKey: .code)
+    self.statusCode = try container.decodeIfPresent(Int.self, forKey: .statusCode)
   }
 }
 

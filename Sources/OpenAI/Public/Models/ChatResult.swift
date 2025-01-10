@@ -102,6 +102,8 @@ public struct ChatResult: Codable, Equatable {
     public let model: String
     /// A list of chat completion choices. Can be more than one if n is greater than 1.
     public let choices: [Choice]
+    /// Needed for Perplexity API
+    public let citations: [URL]?
     /// Usage statistics for the completion request.
     public let usage: Self.CompletionUsage?
     /// This fingerprint represents the backend configuration that the model runs with.
@@ -114,6 +116,7 @@ public struct ChatResult: Codable, Equatable {
         case created
         case model
         case choices
+        case citations
         case usage
         case systemFingerprint = "system_fingerprint"
     }

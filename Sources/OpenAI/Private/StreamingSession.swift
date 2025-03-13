@@ -10,8 +10,8 @@ import Foundation
 import FoundationNetworking
 #endif
 
-final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSessionDelegate, URLSessionDataDelegate {
-    
+public final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSessionDelegate, URLSessionDataDelegate {
+
     enum StreamingError: Error {
         case unknownContent
         case emptyContent
@@ -24,6 +24,7 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
     private let streamingCompletionMarker = "[DONE]"
     private let urlRequest: URLRequest
     private let sslDelegate: SSLDelegateProtocol?
+    private var dataTask: URLSessionDataTask?
     private var byteBuffer = Data()
     private lazy var urlSession: URLSession = {
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
@@ -38,16 +39,21 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
     }
     
     func perform() {
-        self.urlSession
+        dataTask = self.urlSession
             .dataTask(with: self.urlRequest)
-            .resume()
+        dataTask?.resume()
     }
-    
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+
+    public func cancel() {
+        dataTask?.cancel()
+        urlSession.invalidateAndCancel()
+    }
+
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         onComplete?(self, error)
     }
     
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         if ResultType.self == AudioSpeechResult.self, let result = AudioSpeechResult(audio: data) as? ResultType {
             onReceiveContent?(self, result)
             return
@@ -58,7 +64,7 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
         byteBuffer.removeAll()
     }
     
-    func urlSession(
+    public func urlSession(
         _ session: URLSession,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void

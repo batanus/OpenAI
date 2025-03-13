@@ -94,7 +94,7 @@ final public class OpenAI: OpenAIProtocol {
         performRequest(request: JSONRequest<ChatResult>(body: query, url: buildURL(path: .chats)), completion: completion)
     }
     
-    public func chatsStream(query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?) {
+    public func chatsStream(query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?) -> StreamingSession<ChatStreamResult>? {
         performStreamingRequest(request: JSONRequest<ChatStreamResult>(body: query.makeStreamable(), url: buildURL(path: .chats)), onResult: onResult, completion: completion)
     }
     
@@ -163,8 +163,13 @@ extension OpenAI {
             completion(.failure(error))
         }
     }
-    
-    func performStreamingRequest<ResultType: Codable>(request: any URLRequestBuildable, onResult: @escaping (Result<ResultType, Error>) -> Void, completion: ((Error?) -> Void)?) {
+
+    @discardableResult
+    func performStreamingRequest<ResultType: Codable>(
+        request: any URLRequestBuildable,
+        onResult: @escaping (Result<ResultType, Error>) -> Void,
+        completion: ((Error?) -> Void)?
+    ) -> StreamingSession<ResultType>? {
         do {
             let request = try request.build(token: configuration.token, 
                                             organizationIdentifier: configuration.organizationIdentifier,
@@ -183,8 +188,10 @@ extension OpenAI {
             }
             session.perform()
             streamingSessions.append(session)
+            return session
         } catch {
             completion?(error)
+            return nil
         }
     }
     

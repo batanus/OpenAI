@@ -145,7 +145,8 @@ public protocol OpenAIProtocol {
        - onResult: A closure which receives the result when the API request finishes. The closure's parameter, `Result<ChatStreamResult, Error>`, will contain either the `ChatStreamResult` object with the model's response to the conversation, or an error if the request failed.
        - completion: A closure that is being called when all chunks are delivered or uncrecoverable error occured
     **/
-    func chatsStream(query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?)
+    @discardableResult
+    func chatsStream(query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?) -> StreamingSession<ChatStreamResult>?
     
     /**
      This function sends an edits query to the OpenAI API and retrieves an edited version of the prompt based on the instruction given.

@@ -44,7 +44,7 @@ public struct AudioSpeechQuery: Codable {
 
     /// The text to generate audio for. The maximum length is 4096 characters.
     public let input: String
-    /// One of the available TTS models: tts-1 or tts-1-hd
+    /// One of the available TTS models: tts-1, tts-1-hd or gpt-4o-mini-tts
     public let model: Model
     /// The voice to use when generating the audio. Supported voices are alloy, echo, fable, onyx, nova, and shimmer. Previews of the voices are available in the Text to speech guide.
     /// https://platform.openai.com/docs/guides/text-to-speech/voice-options
@@ -55,6 +55,8 @@ public struct AudioSpeechQuery: Codable {
     /// The speed of the generated audio. Select a value from **0.25** to **4.0**. **1.0** is the default.
     /// Defaults to 1
     public let speed: String?
+    /// Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd
+    public let instructions: String?
 
     public enum CodingKeys: String, CodingKey {
         case model
@@ -62,6 +64,7 @@ public struct AudioSpeechQuery: Codable {
         case voice
         case responseFormat = "response_format"
         case speed
+        case instructions
     }
 
     public init(
@@ -69,13 +72,15 @@ public struct AudioSpeechQuery: Codable {
         input: String,
         voice: AudioSpeechVoice,
         responseFormat: AudioSpeechResponseFormat = .mp3,
-        speed: Double?
+        speed: Double?,
+        instructions: String? = nil
     ) {
         self.model = AudioSpeechQuery.validateSpeechModel(model)
         self.speed = AudioSpeechQuery.normalizeSpeechSpeed(speed)
         self.input = input
         self.voice = voice
         self.responseFormat = responseFormat
+        self.instructions = instructions
     }
 }
 

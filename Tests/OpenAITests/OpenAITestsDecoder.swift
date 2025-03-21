@@ -234,8 +234,8 @@ class OpenAITestsDecoder: XCTestCase {
                     parameters: .init(
                         type: .object,
                         properties: [
-                          "location": .init(type: .string, description: "The city and state, e.g. San Francisco, CA"),
-                          "unit": .init(type: .string, enum: ["celsius", "fahrenheit"])
+                          "location": .init(type: [.string], description: "The city and state, e.g. San Francisco, CA"),
+                          "unit": .init(type: [.string], enum: ["celsius", "fahrenheit"])
                         ],
                         required: ["location"]
                       )
@@ -263,10 +263,10 @@ class OpenAITestsDecoder: XCTestCase {
                   "type": "object",
                   "properties": {
                     "location": {
-                      "type": "string",
+                      "type": ["string"],
                       "description": "The city and state, e.g. San Francisco, CA"
                     },
-                    "unit": { "type": "string", "enum": ["celsius", "fahrenheit"] }
+                    "unit": { "type": ["string"], "enum": ["celsius", "fahrenheit"] }
                   },
                   "required": ["location"]
                 }

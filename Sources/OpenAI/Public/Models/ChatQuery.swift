@@ -1051,7 +1051,7 @@ public struct ChatQuery: Equatable, Codable, Streamable, Sendable {
                 public struct Property: Codable, Equatable, Sendable {
                     public typealias JSONType = ChatQuery.ChatCompletionToolParam.FunctionDefinition.FunctionParameters.JSONType
 
-                    public let type: Self.JSONType
+                    public let type: [Self.JSONType]
                     public let description: String?
                     public let format: String?
                     public let items: Self.Items?
@@ -1067,7 +1067,7 @@ public struct ChatQuery: Equatable, Codable, Streamable, Sendable {
                     public let uniqueItems: Bool?
 
                     public init(
-                        type: Self.JSONType,
+                        type: [Self.JSONType],
                         description: String? = nil,
                         format: String? = nil,
                         items: Self.Items? = nil,

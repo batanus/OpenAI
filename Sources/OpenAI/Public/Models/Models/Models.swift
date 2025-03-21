@@ -105,7 +105,9 @@ public extension Model {
     static let tts_1 = "tts-1"
     /// The latest text to speech model, optimized for quality.
     static let tts_1_hd = "tts-1-hd"
-    
+
+    static let gpt4_o_mini_tts = "gpt-4o-mini-tts"
+
     // Transcriptions / Translations
     
     static let whisper_1 = "whisper-1"

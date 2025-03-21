@@ -17,10 +17,14 @@ public struct AudioSpeechQuery: Codable {
     /// [OpenAI Text-to-Speech – Voice Options](https://platform.openai.com/docs/guides/text-to-speech/voice-options)
     public enum AudioSpeechVoice: String, Codable, CaseIterable {
         case alloy
+        case ash
+        case ballad
+        case coral
         case echo
         case fable
         case onyx
         case nova
+        case sage
         case shimmer
     }
     

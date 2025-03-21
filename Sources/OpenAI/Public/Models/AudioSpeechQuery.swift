@@ -82,10 +82,10 @@ public struct AudioSpeechQuery: Codable {
 private extension AudioSpeechQuery {
     
     static func validateSpeechModel(_ inputModel: Model) -> Model {
-        let isModelOfIncorrentFormat = inputModel != .tts_1 && inputModel != .tts_1_hd
-        guard !isModelOfIncorrentFormat else {
-            print("[AudioSpeech] 'AudioSpeechQuery' must have a valid Text-To-Speech model, 'tts-1' or 'tts-1-hd'. Setting model to 'tts-1'.")
-            return .tts_1
+        let isValidModel = [String.tts_1, .tts_1_hd, .gpt4_o_mini_tts].contains(inputModel)
+        guard isValidModel else {
+            print("[AudioSpeech] 'AudioSpeechQuery' must have a valid Text-To-Speech model, 'tts-1' 'tts-1-hd' or 'gpt-4o-mini-tts'. Setting model to 'gpt4_o_mini_tts'.")
+            return .gpt4_o_mini_tts
         }
         return inputModel
     }

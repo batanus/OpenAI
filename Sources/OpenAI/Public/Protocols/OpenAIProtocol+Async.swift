@@ -118,7 +118,7 @@ public extension OpenAIProtocol {
         query: ChatQuery
     ) -> AsyncThrowingStream<ChatStreamResult, Error> {
         return AsyncThrowingStream { continuation in
-            chatsStream(query: query) { result in
+            return chatsStream(query: query) { result in
                 continuation.yield(with: result)
             } completion: { error in
                 continuation.finish(throwing: error)

@@ -71,9 +71,9 @@ public extension OpenAIProtocol {
         .eraseToAnyPublisher()
     }
 
-    func chatsStream(query: ChatQuery) -> (publisher: AnyPublisher<Result<ChatStreamResult, Error>, Error>, session: StreamingSession<ChatStreamResult>?) {
+    func chatsStream(query: ChatQuery) -> AnyPublisher<Result<ChatStreamResult, Error>, Error> {
         let progress = PassthroughSubject<Result<ChatStreamResult, Error>, Error>()
-        let session = chatsStream(query: query) { result in
+        chatsStream(query: query) { result in
             progress.send(result)
         } completion: { error in
             if let error {
@@ -82,7 +82,7 @@ public extension OpenAIProtocol {
                 progress.send(completion: .finished)
             }
         }
-        return (progress.eraseToAnyPublisher(), session)
+        return progress.eraseToAnyPublisher()
     }
 
     func edits(query: EditsQuery) -> AnyPublisher<EditsResult, Error> {

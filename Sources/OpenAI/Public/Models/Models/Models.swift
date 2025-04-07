@@ -112,6 +112,8 @@ public extension Model {
     
     static let whisper_1 = "whisper-1"
 
+    static let gpt4_o_mini_transcribe = "gpt-4o-mini-transcribe"
+
     // Image Generation
     static let dall_e_2 = "dall-e-2"
     static let dall_e_3 = "dall-e-3"

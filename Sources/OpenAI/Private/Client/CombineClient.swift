@@ -52,8 +52,6 @@ final class CombineClient: Sendable {
             return session
                 .dataTaskPublisher(for: interceptedRequest)
                 .tryMap { (data, response) in
-                    guard let response = response as? HTTPURLResponse else { return .init(audio: Data()) }
-                    guard 200...299 ~= response.statusCode else { throw OpenAIError.statusError(response: response, statusCode: response.statusCode) }
                     let finalData: Data = try self.responseHandler.interceptAndDecodeRaw(response: response, urlRequest: urlRequest, responseData: data)
                     return .init(audio: finalData)
                 }.eraseToAnyPublisher()

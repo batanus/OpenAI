@@ -383,7 +383,78 @@ class OpenAITestsDecoder: XCTestCase {
         let decoded = try JSONDecoder().decode(Components.Schemas.Reasoning.self, from: data)
         XCTAssertEqual(decoded.effort, .minimal)
     }
-    
+
+    func testVerbosityDecoding() throws {
+        // Test decoding "low"
+        let jsonLow = """
+        { "format": { "type": "text" }, "verbosity": "low" }
+        """
+        let dataLow = jsonLow.data(using: .utf8)!
+        let decodedLow = try JSONDecoder().decode(CreateModelResponseQuery.TextResponseConfigurationOptions.self, from: dataLow)
+        XCTAssertEqual(decodedLow.verbosity, .low)
+
+        // Test decoding "medium"
+        let jsonMedium = """
+        { "format": { "type": "text" }, "verbosity": "medium" }
+        """
+        let dataMedium = jsonMedium.data(using: .utf8)!
+        let decodedMedium = try JSONDecoder().decode(CreateModelResponseQuery.TextResponseConfigurationOptions.self, from: dataMedium)
+        XCTAssertEqual(decodedMedium.verbosity, .medium)
+
+        // Test decoding "high"
+        let jsonHigh = """
+        { "format": { "type": "text" }, "verbosity": "high" }
+        """
+        let dataHigh = jsonHigh.data(using: .utf8)!
+        let decodedHigh = try JSONDecoder().decode(CreateModelResponseQuery.TextResponseConfigurationOptions.self, from: dataHigh)
+        XCTAssertEqual(decodedHigh.verbosity, .high)
+
+        // Test decoding without verbosity (should be nil)
+        let jsonNil = """
+        { "format": { "type": "text" } }
+        """
+        let dataNil = jsonNil.data(using: .utf8)!
+        let decodedNil = try JSONDecoder().decode(CreateModelResponseQuery.TextResponseConfigurationOptions.self, from: dataNil)
+        XCTAssertNil(decodedNil.verbosity)
+    }
+
+    func testChatQueryWithReasoningEffortNone() throws {
+        let chatQuery = ChatQuery(
+            messages: [
+                .init(role: .user, content: "Who are you?")!
+            ],
+            model: .gpt5_1,
+            reasoningEffort: ChatQuery.ReasoningEffort.none
+        )
+        let expectedValue = """
+            {
+                "model": "gpt-5.1",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Who are you?"
+                    }
+                ],
+                "reasoning_effort": "none",
+                "stream": false
+            }
+            """
+
+        let chatQueryAsDict = try jsonDataAsNSDictionary(JSONEncoder().encode(chatQuery))
+        let expectedValueAsDict = try jsonDataAsNSDictionary(expectedValue.data(using: .utf8)!)
+
+        XCTAssertEqual(chatQueryAsDict, expectedValueAsDict)
+    }
+
+    func testReasoningEffortDecodingNone() throws {
+        let json = """
+        { "effort": "none" }
+        """
+        let data = json.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(Components.Schemas.Reasoning.self, from: data)
+        XCTAssertEqual(decoded.effort, Components.Schemas.ReasoningEffort.none)
+    }
+
     func testEmbeddings() async throws {
         let data = """
         {
@@ -812,7 +883,18 @@ class OpenAITestsDecoder: XCTestCase {
         let data = try JSONEncoder().encode(query)
         try testEncodedCreateResponseQueryWithStructuredOutput(data)
     }
-    
+
+    func testCreateResponseQueryWithVerbosity() throws {
+        let query = CreateModelResponseQuery(
+            input: .textInput("Return a low verbosity response."),
+            model: .gpt5,
+            text: .init(format: .text, verbosity: .low)
+        )
+
+        let data = try JSONEncoder().encode(query)
+        try testEncodedCreateResponseQueryWithVerbosity(data)
+    }
+
     private func testEncodedChatQueryWithStructuredOutput(_ data: Data) throws {
         let dict = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
         XCTAssertEqual(try XCTUnwrap(dict["model"] as? String), "gpt-4o")
@@ -853,5 +935,17 @@ class OpenAITestsDecoder: XCTestCase {
         let titleSchema = try XCTUnwrap(properties["title"])
         XCTAssertEqual(titleSchema.count, 1)
         XCTAssertEqual(try XCTUnwrap(titleSchema["type"] as? String), "string")
+    }
+
+    private func testEncodedCreateResponseQueryWithVerbosity(_ data: Data) throws {
+        let dict = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(try XCTUnwrap(dict["model"] as? String), "gpt-5")
+
+        let textResponseConfigurationOptions = try XCTUnwrap(dict["text"] as? [String: Any])
+        let outputFormat = try XCTUnwrap(textResponseConfigurationOptions["format"] as? [String: Any])
+        let outputVerbosity = try XCTUnwrap(textResponseConfigurationOptions["verbosity"] as? String)
+
+        XCTAssertEqual(try XCTUnwrap(outputFormat["type"] as? String), "text")
+        XCTAssertNotNil(CreateModelResponseQuery.TextResponseConfigurationOptions.Verbosity(rawValue: outputVerbosity))
     }
 }

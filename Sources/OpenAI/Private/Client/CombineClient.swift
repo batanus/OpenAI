@@ -35,7 +35,12 @@ final class CombineClient: Sendable {
             return session
                 .dataTaskPublisher(for: interceptedRequest)
                 .tryMap { (data, response) in
-                    try self.responseHandler.interceptAndDecode(response: response, urlRequest: urlRequest, responseData: data)
+                    guard let response = response as? HTTPURLResponse else { throw OpenAIError.emptyData }
+                    guard 200...299 ~= response.statusCode else {
+                        if let error = try? JSONDecoder().decode(APIError.self, from: data) { throw error }
+                        throw OpenAIError.statusError(response: response, statusCode: response.statusCode)
+                    }
+                    return try self.responseHandler.interceptAndDecode(response: response, urlRequest: urlRequest, responseData: data)
                 }.eraseToAnyPublisher()
         } catch {
             return Fail(outputType: ResultType.self, failure: error)
@@ -53,7 +58,10 @@ final class CombineClient: Sendable {
                 .dataTaskPublisher(for: interceptedRequest)
                 .tryMap { (data, response) in
                     guard let response = response as? HTTPURLResponse else { return .init(audio: Data()) }
-                    guard 200...299 ~= response.statusCode else { throw OpenAIError.statusError(response: response, statusCode: response.statusCode) }
+                    guard 200...299 ~= response.statusCode else {
+                        if let error = try? JSONDecoder().decode(APIError.self, from: data) { throw error }
+                        throw OpenAIError.statusError(response: response, statusCode: response.statusCode)
+                    }
                     let finalData: Data = try self.responseHandler.interceptAndDecodeRaw(response: response, urlRequest: urlRequest, responseData: data)
                     return .init(audio: finalData)
                 }.eraseToAnyPublisher()

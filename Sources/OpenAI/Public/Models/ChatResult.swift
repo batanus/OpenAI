@@ -260,10 +260,10 @@ public struct ChatResult: Codable, Equatable, Sendable {
 
         public struct PromptTokensDetails: Codable, Equatable, Sendable {
             /// Audio input tokens present in the prompt.
-            public let audioTokens: Int
+            public let audioTokens: Int?
             /// Cached tokens present in the prompt.
-            public let cachedTokens: Int
-            
+            public let cachedTokens: Int?
+
             enum CodingKeys: String, CodingKey {
                 case audioTokens = "audio_tokens"
                 case cachedTokens = "cached_tokens"

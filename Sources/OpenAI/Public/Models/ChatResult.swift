@@ -233,6 +233,18 @@ public struct ChatResult: Codable, Equatable, Sendable {
     }
 
     public struct CompletionUsage: Codable, Equatable, Sendable {
+        public struct CostDetails: Codable, Equatable, Sendable {
+            public let upstreamInferenceCost: Double?
+            public let upstreamInferencePromptCost: Double?
+            public let upstreamInferenceCompletionsCost: Double?
+
+            enum CodingKeys: String, CodingKey {
+                case upstreamInferenceCost = "upstream_inference_cost"
+                case upstreamInferencePromptCost = "upstream_inference_prompt_cost"
+                case upstreamInferenceCompletionsCost = "upstream_inference_completions_cost"
+            }
+        }
+
         /// Number of tokens in the generated completion.
         public let completionTokens: Int
         /// Number of tokens in the prompt.
@@ -243,6 +255,8 @@ public struct ChatResult: Codable, Equatable, Sendable {
         public let promptTokensDetails: PromptTokensDetails?
         /// The cost in USD for the request
         public let cost: Double?
+        /// Detailed cost breakdown
+        public let costDetails: CostDetails?
 
         public struct PromptTokensDetails: Codable, Equatable, Sendable {
             /// Audio input tokens present in the prompt.
@@ -262,6 +276,7 @@ public struct ChatResult: Codable, Equatable, Sendable {
             case totalTokens = "total_tokens"
             case promptTokensDetails = "prompt_tokens_details"
             case cost
+            case costDetails = "cost_details"
         }
     }
 }

@@ -241,7 +241,9 @@ public struct ChatResult: Codable, Equatable, Sendable {
         public let totalTokens: Int
         /// Breakdown of tokens used in the prompt.
         public let promptTokensDetails: PromptTokensDetails?
-        
+        /// The cost in USD for the request
+        public let cost: Double?
+
         public struct PromptTokensDetails: Codable, Equatable, Sendable {
             /// Audio input tokens present in the prompt.
             public let audioTokens: Int
@@ -259,6 +261,7 @@ public struct ChatResult: Codable, Equatable, Sendable {
             case promptTokens = "prompt_tokens"
             case totalTokens = "total_tokens"
             case promptTokensDetails = "prompt_tokens_details"
+            case cost
         }
     }
 }

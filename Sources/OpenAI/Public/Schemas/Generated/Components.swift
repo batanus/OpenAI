@@ -1660,7 +1660,7 @@ public enum Components {
             /// The language of the input audio.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/language`.
-            public var language: Swift.String
+            public var language: Swift.String?
             /// The duration of the input audio.
             ///
             /// - Remark: Generated from `#/components/schemas/CreateTranscriptionResponseVerboseJson/duration`.
@@ -1686,7 +1686,7 @@ public enum Components {
             ///   - words: Extracted words and their corresponding timestamps.
             ///   - segments: Segments of the transcribed text and their corresponding details.
             public init(
-                language: Swift.String,
+                language: Swift.String?,
                 duration: Swift.Double,
                 text: Swift.String,
                 words: [Components.Schemas.TranscriptionWord]? = nil,
